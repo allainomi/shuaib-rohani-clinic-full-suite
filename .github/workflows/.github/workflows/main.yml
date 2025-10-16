@@ -1,0 +1,36 @@
+name: Build Project
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: List files
+      run: |
+        echo "Project structure:"
+        ls -la
+        echo "Frontend files:"
+        ls -la frontend/
+        
+    - name: Create build info
+      run: |
+        mkdir -p dist
+        echo "Build created at: $(date)" > dist/build-info.txt
+        echo "Commit: $GITHUB_SHA" >> dist/build-info.txt
+        
+    - name: Upload project artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: clinic-project
+        path: |
+          frontend/
+          backend/
+          android/
+        retention-days: 30
