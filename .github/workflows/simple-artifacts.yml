@@ -1,0 +1,35 @@
+name: Simple Artifacts
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create basic artifacts
+      run: |
+        echo "Creating artifacts..."
+        mkdir -p output
+        echo "Project: Shuaib Islamic App" > output/info.txt
+        echo "Created: $(date)" >> output/info.txt
+        echo "Commit: $GITHUB_SHA" >> output/info.txt
+        
+        # Simple file listing
+        find . -type f -name "*.dart" -o -name "*.yaml" -o -name "*.json" | head -20 > output/files.txt
+        ls -la > output/structure.txt
+        
+        echo "Artifacts created successfully!"
+        
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: simple-artifacts
+        path: output/
+        retention-days: 30
