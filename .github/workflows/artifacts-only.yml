@@ -1,0 +1,34 @@
+name: Generate Artifacts Only
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  create-artifacts:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Create project artifacts
+      run: |
+        mkdir -p artifacts
+        echo "Shuaib Islamic App v1.0" > artifacts/project-info.txt
+        echo "Build Date: $(date)" >> artifacts/project-info.txt
+        echo "Commit: $GITHUB_SHA" >> artifacts/project-info.txt
+        echo "Repository: $GITHUB_REPOSITORY" >> artifacts/project-info.txt
+        
+        echo "=== Project Structure ===" > artifacts/file-structure.txt
+        find . -type f -name "*.dart" -o -name "*.yaml" -o -name "*.json" -o -name "*.js" -o -name "*.html" -o -name "*.css" -o -name "*.kt" -o -name "*.xml" | head -50 >> artifacts/file-structure.txt
+        
+        echo "=== Directory Listing ===" > artifacts/directories.txt
+        ls -la >> artifacts/directories.txt
+        
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: islamic-app-source
+        path: artifacts/
+        retention-days: 30
